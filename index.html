@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekly Carbon Footprint Calculator</title>
+<style>
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f0f4f8;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+.container {
+  max-width: 750px;
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin: 40px auto;
+}
+h1 {
+  text-align: center;
+  color: #2a7f62;
+}
+.subtitle {
+  text-align: center;
+  color: #666;
+  margin-bottom: 25px;
+}
+.category {
+  margin-bottom: 25px;
+}
+.category h2 {
+  color: #2a7f62;
+  margin-bottom: 10px;
+}
+label {
+  display: block;
+  margin: 8px 0 4px;
+  font-weight: 500;
+}
+input, select {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.calculate-btn {
+  background-color: #2a7f62;
+  color: white;
+}
+.reset-btn {
+  background-color: #e74c3c;
+  color: white;
+  margin-left: 10px;
+}
+.button-group {
+  text-align: center;
+  margin-top: 20px;
+}
+.results {
+  display: none;
+  margin-top: 30px;
+}
+.result-card {
+  background: #f9fafb;
+  border-left: 5px solid #2a7f62;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+.result-card h3 {
+  margin: 0 0 8px;
+  color: #2a7f62;
+}
+.total-box {
+  background: #e8f5e9;
+  border-left: 6px solid #1b5e20;
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 20px;
+  text-align: center;
+}
+#tipsContainer {
+  background: #fff8e1;
+  border-left: 5px solid #fbc02d;
+  border-radius: 10px;
+  padding: 15px;
+  margin-top: 25px;
+}
+#tipsContainer p {
+  margin: 8px 0;
+}
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌍 Weekly Carbon Footprint Calculator</h1>
+    <p class="subtitle">See your weekly CO₂ emissions clearly by category</p>
+
+    <!-- --- Input Sections (same as before) --- -->
+    <div class="category">
+      <h2>🚗 Transportation</h2>
+      <label>Car miles driven this week</label>
+      <input type="number" id="carMiles" placeholder="e.g., 230" min="0">
+      <label>Car fuel type</label>
+      <select id="carType">
+        <option value="0.79">Gasoline</option>
+        <option value="0.88">Diesel</option>
+        <option value="0.3">Hybrid</option>
+        <option value="0.1">Electric</option>
+      </select>
+      <label>Public transport trips</label>
+      <input type="number" id="publicTransport" placeholder="e.g., 10" min="0">
+      <label>Flight hours</label>
+      <input type="number" id="flights" placeholder="e.g., 0" min="0">
+    </div>
+
+    <div class="category">
+      <h2>⚡ Home Energy</h2>
+      <label>Electricity usage (kWh)</label>
+      <input type="number" id="electricity" placeholder="e.g., 210" min="0">
+      <label>Natural gas (therms)</label>
+      <input type="number" id="naturalGas" placeholder="e.g., 10" min="0">
+      <label>Renewable energy used</label>
+      <select id="renewable">
+        <option value="0">No renewable</option>
+        <option value="25">25%</option>
+        <option value="50">50%</option>
+        <option value="75">75%</option>
+        <option value="100">100%</option>
+      </select>
+    </div>
+
+    <div class="category">
+      <h2>🍽️ Diet & Food</h2>
+      <label>Meals with red meat</label>
+      <input type="number" id="redMeat" placeholder="e.g., 5" min="0">
+      <label>Meals with chicken/fish</label>
+      <input type="number" id="poultry" placeholder="e.g., 7" min="0">
+      <label>Plant-based meals</label>
+      <input type="number" id="plantBased" placeholder="e.g., 9" min="0">
+      <label>Food waste (lbs)</label>
+      <input type="number" id="foodWaste" placeholder="e.g., 5" min="0">
+      <label>Locally sourced food</label>
+      <select id="localFood">
+        <option value="0">Rarely</option>
+        <option value="25">Sometimes</option>
+        <option value="50">Often</option>
+        <option value="75">Mostly</option>
+      </select>
+    </div>
+
+    <div class="category">
+      <h2>🛍️ Lifestyle</h2>
+      <label>New clothing items</label>
+      <input type="number" id="clothing" placeholder="e.g., 0" min="0">
+      <label>Online deliveries</label>
+      <input type="number" id="deliveries" placeholder="e.g., 2" min="0">
+      <label>Electronics purchased</label>
+      <input type="number" id="electronics" placeholder="e.g., 0" min="0">
+      <label>Recycling habits</label>
+      <select id="recycling">
+        <option value="0">None</option>
+        <option value="0.3">Some</option>
+        <option value="0.7">Most</option>
+        <option value="1">All</option>
+      </select>
+    </div>
+
+    <div class="button-group">
+      <button class="calculate-btn" onclick="calculateFootprint()">Calculate</button>
+      <button class="reset-btn" onclick="resetForm()">Reset</button>
+    </div>
+
+    <!-- Results -->
+    <div id="results" class="results">
+      <div class="result-card">
+        <h3>🚗 Transportation</h3>
+        <p><strong><span id="transResult">0</span></strong> kg CO₂ this week</p>
+      </div>
+
+      <div class="result-card">
+        <h3>⚡ Home Energy</h3>
+        <p><strong><span id="energyResult">0</span></strong> kg CO₂ this week</p>
+      </div>
+
+      <div class="result-card">
+        <h3>🍽️ Food</h3>
+        <p><strong><span id="foodResult">0</span></strong> kg CO₂ this week</p>
+      </div>
+
+      <div class="result-card">
+        <h3>🛍️ Lifestyle</h3>
+        <p><strong><span id="lifestyleResult">0</span></strong> kg CO₂ this week</p>
+      </div>
+
+      <div class="total-box">
+        <h2>Total Weekly Footprint</h2>
+        <h1><span id="totalResult">0</span> kg CO₂</h1>
+        <p>Projected Annual: <strong><span id="annualResult">0</span></strong> tons CO₂</p>
+      </div>
+
+      <div id="tipsContainer"></div>
+    </div>
+  </div>
+
+<script>
+function calculateFootprint() {
+  const carMiles = +document.getElementById('carMiles').value || 0;
+  const carType = +document.getElementById('carType').value;
+  const publicTransport = +document.getElementById('publicTransport').value || 0;
+  const flights = +document.getElementById('flights').value || 0;
+  const carEmissions = carMiles * carType;
+  const publicEmissions = publicTransport * 0.089;
+  const flightEmissions = flights * 90;
+  const transportTotal = carEmissions + publicEmissions + flightEmissions;
+
+  const electricity = +document.getElementById('electricity').value || 0;
+  const naturalGas = +document.getElementById('naturalGas').value || 0;
+  const renewable = +document.getElementById('renewable').value || 0;
+  const electricityEmissions = electricity * 0.92 * (1 - renewable / 100);
+  const gasEmissions = naturalGas * 5.3;
+  const energyTotal = electricityEmissions + gasEmissions;
+
+  const redMeat = +document.getElementById('redMeat').value || 0;
+  const poultry = +document.getElementById('poultry').value || 0;
+  const plantBased = +document.getElementById('plantBased').value || 0;
+  const foodWaste = +document.getElementById('foodWaste').value || 0;
+  const localFood = +document.getElementById('localFood').value || 0;
+  const redMeatEmissions = redMeat * 6.61;
+  const poultryEmissions = poultry * 1.65;
+  const plantEmissions = plantBased * 0.45;
+  const wasteEmissions = foodWaste * 2.5;
+  const localReduction = (redMeatEmissions + poultryEmissions + plantEmissions) * (localFood / 100) * 0.15;
+  const foodTotal = redMeatEmissions + poultryEmissions + plantEmissions + wasteEmissions - localReduction;
+
+  const clothing = +document.getElementById('clothing').value || 0;
+  const deliveries = +document.getElementById('deliveries').value || 0;
+  const electronics = +document.getElementById('electronics').value || 0;
+  const recycling = +document.getElementById('recycling').value;
+  const clothingEmissions = clothing * 20;
+  const deliveryEmissions = deliveries * 0.5;
+  const electronicsEmissions = electronics * 300;
+  const recyclingReduction = (clothingEmissions + deliveryEmissions) * recycling * 0.3;
+  const lifestyleTotal = clothingEmissions + deliveryEmissions + electronicsEmissions - recyclingReduction;
+
+  const total = transportTotal + energyTotal + foodTotal + lifestyleTotal;
+  const annual = (total * 52) / 1000;
+
+  document.getElementById('transResult').textContent = transportTotal.toFixed(1);
+  document.getElementById('energyResult').textContent = energyTotal.toFixed(1);
+  document.getElementById('foodResult').textContent = foodTotal.toFixed(1);
+  document.getElementById('lifestyleResult').textContent = lifestyleTotal.toFixed(1);
+  document.getElementById('totalResult').textContent = total.toFixed(1);
+  document.getElementById('annualResult').textContent = annual.toFixed(1);
+
+  generateTips({ carMiles, flights, redMeat, foodWaste, clothing });
+  document.getElementById('results').style.display = 'block';
+}
+
+function generateTips(data) {
+  const tipsContainer = document.getElementById('tipsContainer');
+  tipsContainer.innerHTML = "<h3>🌱 Personalized Tips</h3>";
+  if (data.carMiles > 200) tipsContainer.innerHTML += `<p>🚗 Try carpooling or using public transport more often.</p>`;
+  if (data.flights > 0) tipsContainer.innerHTML += `<p>✈️ Limit air travel when possible to lower emissions.</p>`;
+  if (data.redMeat > 3) tipsContainer.innerHTML += `<p>🍖 Cut down on red meat meals to reduce CO₂ impact.</p>`;
+  if (data.foodWaste > 3) tipsContainer.innerHTML += `<p>🗑️ Plan meals and store food properly to avoid waste.</p>`;
+  if (data.clothing > 0) tipsContainer.innerHTML += `<p>👕 Buy fewer clothes — support sustainable fashion.</p>`;
+  if (tipsContainer.innerHTML === "<h3>🌱 Personalized Tips</h3>")
+    tipsContainer.innerHTML += `<p>🌟 Excellent! You’re already eco-conscious!</p>`;
+}
+
+function resetForm() {
+  document.querySelectorAll('input, select').forEach(el => el.value = '');
+  document.getElementById('results').style.display = 'none';
+}
+</script>
+</body>
+</html>
